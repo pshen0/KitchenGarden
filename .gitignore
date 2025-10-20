@@ -1,0 +1,9 @@
+# User-specific files
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.DS_Store
+
+# Xcode user data
+*.xcworkspace/
+xcuserdata/
