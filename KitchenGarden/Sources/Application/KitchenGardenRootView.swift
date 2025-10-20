@@ -18,11 +18,11 @@ struct RootView: View {
                     .navigationDestination(for: AppRoute.self) { route in
                         switch route {
                         case .pomodoro:
-                            Color.indigo
+                            diContainer.pomodoroModuleFactory.makePomodoroScreen()
                         case .clipboard:
-                            Color.mint
+                            diContainer.clipboardModuleFactory.makeClipboardScreen()
                         case .tasks:
-                            Color.green
+                            diContainer.tasksModuleFactory.makeTasksScreen()
                         }
                     }
             }

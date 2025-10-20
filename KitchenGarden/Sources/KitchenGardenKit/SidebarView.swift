@@ -18,13 +18,16 @@ struct SidebarView: View {
                 router.popAll()
             }) {
                 HStack {
-                    Image(systemName: "star.fill")
+                    Image(.tomato)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 30)
                     Text(Constants.homeButton)
                     Spacer()
                 }
                 .padding()
             }
-            .frame(width: 150, height: 30)
+            .frame(width: 150, height: 40)
             .background(router.path.isEmpty ? Color.accentColor : .clear)
             .cornerRadius(10)
             
@@ -32,13 +35,16 @@ struct SidebarView: View {
                 router.setRoot(.clipboard)
             }) {
                 HStack {
-                    Image(systemName: "star.fill")
+                    Image(.tomato)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 30)
                     Text(Constants.clipboardButton)
                     Spacer()
                 }
                 .padding()
             }
-            .frame(width: 150, height: 30)
+            .frame(width: 150, height: 40)
             .background(!router.path.isEmpty && router.path.last == .clipboard ? Color.accentColor : .clear)
             .cornerRadius(10)
             
@@ -46,13 +52,16 @@ struct SidebarView: View {
                 router.setRoot(.tasks)
             }) {
                 HStack {
-                    Image(systemName: "star.fill")
+                    Image(.tomato)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 30)
                     Text(Constants.tasksButton)
                     Spacer()
                 }
                 .padding()
             }
-            .frame(width: 150, height: 30)
+            .frame(width: 150, height: 40)
             .background(!router.path.isEmpty && router.path.last == .tasks ? Color.accentColor : .clear)
             .cornerRadius(10)
             
@@ -60,13 +69,16 @@ struct SidebarView: View {
                 router.setRoot(.pomodoro)
             }) {
                 HStack {
-                    Image(systemName: "star.fill")
+                    Image(.tomato)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 30)
                     Text(Constants.pomodoroButton)
                     Spacer()
                 }
                 .padding()
             }
-            .frame(width: 150, height: 30)
+            .frame(width: 150, height: 40)
             .background(!router.path.isEmpty && router.path.last == .pomodoro ? Color.accentColor : .clear)
             .cornerRadius(10)
         }
