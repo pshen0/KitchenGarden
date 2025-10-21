@@ -11,76 +11,36 @@ struct SidebarView: View {
         List {
             Text(Constants.appName)
                 .foregroundColor(.accentColor)
-                .font(.title3)
+                .font(.title2)
                 .bold()
             
-            Button(action: {
+            SidebarButton(title: Constants.homeButton,
+                          image: Image(.vegetables),
+                          isSelected: router.path.isEmpty
+            ) {
                 router.popAll()
-            }) {
-                HStack {
-                    Image(.tomato)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 30)
-                    Text(Constants.homeButton)
-                    Spacer()
-                }
-                .padding()
             }
-            .frame(width: 150, height: 40)
-            .background(router.path.isEmpty ? Color.accentColor : .clear)
-            .cornerRadius(10)
             
-            Button(action: {
+            SidebarButton(title: Constants.clipboardButton,
+                          image: Image(.cucumber),
+                          isSelected: !router.path.isEmpty && router.path.last == .clipboard
+            ) {
                 router.setRoot(.clipboard)
-            }) {
-                HStack {
-                    Image(.tomato)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 30)
-                    Text(Constants.clipboardButton)
-                    Spacer()
-                }
-                .padding()
             }
-            .frame(width: 150, height: 40)
-            .background(!router.path.isEmpty && router.path.last == .clipboard ? Color.accentColor : .clear)
-            .cornerRadius(10)
             
-            Button(action: {
+            SidebarButton(title: Constants.tasksButton,
+                          image: Image(.corn),
+                          isSelected: !router.path.isEmpty && router.path.last == .tasks
+            ) {
                 router.setRoot(.tasks)
-            }) {
-                HStack {
-                    Image(.tomato)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 30)
-                    Text(Constants.tasksButton)
-                    Spacer()
-                }
-                .padding()
             }
-            .frame(width: 150, height: 40)
-            .background(!router.path.isEmpty && router.path.last == .tasks ? Color.accentColor : .clear)
-            .cornerRadius(10)
             
-            Button(action: {
+            SidebarButton(title: Constants.pomodoroButton,
+                          image: Image(.tomato),
+                          isSelected: !router.path.isEmpty && router.path.last == .pomodoro
+            ) {
                 router.setRoot(.pomodoro)
-            }) {
-                HStack {
-                    Image(.tomato)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 30)
-                    Text(Constants.pomodoroButton)
-                    Spacer()
-                }
-                .padding()
             }
-            .frame(width: 150, height: 40)
-            .background(!router.path.isEmpty && router.path.last == .pomodoro ? Color.accentColor : .clear)
-            .cornerRadius(10)
         }
         .listStyle(.sidebar)
         .navigationTitle("Menu")
@@ -94,4 +54,8 @@ struct SidebarView: View {
         static let clipboardButton = "Clipboard"
         static let tasksButton = "Tasks"
     }
+}
+
+#Preview {
+    SidebarView(router: AppRouter())
 }
