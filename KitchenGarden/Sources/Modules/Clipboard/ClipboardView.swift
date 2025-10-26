@@ -13,7 +13,8 @@ struct ClipboardView<ViewModel: ClipboardViewModel>: View {
 
     var body: some View {
         ZStack() {
-            Color.mint
+            Colors.greenBackground
+                .ignoresSafeArea()
         }
     }
 }

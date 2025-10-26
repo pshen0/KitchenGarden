@@ -19,7 +19,7 @@ struct SidebarButton: View {
             .padding()
         }
         .frame(width: 150, height: 40)
-        .background(isSelected ? Color.accentColor.opacity(0.3) : .clear)
+        .background(isSelected ? Color.secondary : .clear)
         .cornerRadius(10)
     }
 }

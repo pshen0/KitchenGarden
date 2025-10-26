@@ -10,7 +10,6 @@ struct SidebarView: View {
     var body: some View {
         List {
             Text(Constants.appName)
-                .foregroundColor(.accentColor)
                 .font(.title2)
                 .bold()
             

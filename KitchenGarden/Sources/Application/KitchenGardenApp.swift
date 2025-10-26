@@ -31,5 +31,6 @@ struct KitchenGardenApp: App {
                 .environmentObject(router)
         }
         .modelContainer(sharedModelContainer)
+        .windowStyle(.hiddenTitleBar)
     }
 }

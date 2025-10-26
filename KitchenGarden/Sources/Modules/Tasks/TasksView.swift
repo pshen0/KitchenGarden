@@ -13,7 +13,8 @@ struct TasksView<ViewModel: TasksViewModel>: View {
 
     var body: some View {
         ZStack() {
-            Color.indigo
+            Colors.yellowBackground
+                .ignoresSafeArea()
         }
     }
 }

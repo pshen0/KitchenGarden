@@ -13,7 +13,8 @@ struct HomeView<ViewModel: HomeViewModel>: View {
 
     var body: some View {
         ZStack() {
-            Color.purple
+            Colors.neutralBackground
+                .ignoresSafeArea()
         }
     }
 }

@@ -1,0 +1,23 @@
+import SwiftUI
+
+enum Colors {
+    static let neutralBackground: Color = Color("neutralBackground")
+    
+    static let pinkAccent: Color = Color("pinkAccent")
+    static let redAccent: Color = Color("redAccent")
+    static let yellowAccent: Color = Color("yellowAccent")
+    static let greenAccent: Color = Color("greenAccent")
+    
+    static let redBackground: Color = Color("redBackground")
+    static let redSecondary: Color = Color("redSecondary")
+    static let redText: Color = Color("redText")
+    
+    static let yellowBackground: Color = Color("yellowBackground")
+    static let yellowSecondary: Color = Color("yellowSecondary")
+    static let yellowStroke: Color = Color("yellowStroke")
+    static let yellowTaskDark1: Color = Color("yellowTaskDark1")
+    static let yellowTaskDark2: Color = Color("yellowTaskDark2")
+    static let yellowTaskLight: Color = Color("yellowTaskLight")
+    
+    static let greenBackground: Color = Color("greenBackground")
+}

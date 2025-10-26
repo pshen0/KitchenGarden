@@ -13,7 +13,12 @@ struct PomodoroView<ViewModel: PomodoroViewModel>: View {
 
     var body: some View {
         ZStack() {
-            Color.green
+            Colors.redBackground
+                .ignoresSafeArea()
+            Image(.tomato)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200, height: 200)
         }
     }
 }
