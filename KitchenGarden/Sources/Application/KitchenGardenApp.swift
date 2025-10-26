@@ -1,9 +1,12 @@
 import SwiftUI
 import SwiftData
+import Combine
 
 @main
 struct KitchenGardenApp: App {
     @StateObject private var router: AppRouter
+    @StateObject private var launcherHotkeyManager = LauncherHotkeyManager()
+    
     private var diContainer: KitchenGardenDIContainer
     
     init() {
@@ -28,7 +31,9 @@ struct KitchenGardenApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(diContainer: diContainer)
+                .environmentObject(launcherHotkeyManager)
                 .environmentObject(router)
+            
         }
         .modelContainer(sharedModelContainer)
         .windowStyle(.hiddenTitleBar)
