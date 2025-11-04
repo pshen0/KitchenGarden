@@ -3,14 +3,15 @@ import Combine
 
 @MainActor
 protocol TasksViewModel: ObservableObject {
-
+    var tasks: [TaskItem] { get }
 }
 
 @MainActor
 final class TasksViewModelImpl: TasksViewModel {
     
     // MARK: - Internal Properties
-
+    
+    var tasks: [TaskItem] = []
     
     // MARK: - Init
     
@@ -19,12 +20,8 @@ final class TasksViewModelImpl: TasksViewModel {
         self.router = router
     }
     
-    // MARK: - Public Methods
-
-    
     // MARK: - Private Properties
     
     private let interactor: TasksInteractor
     private let router: TasksRouter
 }
-

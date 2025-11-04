@@ -1,8 +1,9 @@
 import SwiftUI
+import SwiftData
 
 @MainActor
 protocol TasksFactory {
-    func makeTasksScreen() ->  TasksView<TasksViewModelImpl>
+    func makeTasksScreen() -> TasksView<TasksViewModelImpl>
 }
 
 struct TasksFactoryImpl: TasksFactory {
