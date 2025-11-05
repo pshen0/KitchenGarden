@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct TasksHeaderView: View {
+    @EnvironmentObject var viewModel: TasksViewModelImpl
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -26,14 +28,31 @@ struct TasksHeaderView: View {
                 .padding(.horizontal, 16)
             
             HStack {
-                Button(action: {}) {
+                Menu {
+                    Button("All Priorities") {
+                        viewModel.priorityFilter = nil
+                    }
+                    Button("No Priority") {
+                        viewModel.priorityFilter = -1
+                    }
+                    Button("Low") {
+                        viewModel.priorityFilter = 0
+                    }
+                    Button("Medium") {
+                        viewModel.priorityFilter = 1
+                    }
+                    Button("High") {
+                        viewModel.priorityFilter = 2
+                    }
+                } label: {
                     HStack {
-                        Text("Priority")
+                        Text(priorityFilterText)
                         Images.SystemImages.chevronDown
                     }
                     .foregroundColor(.primary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .overlay(
@@ -47,4 +66,15 @@ struct TasksHeaderView: View {
             }
         }
     }
+    
+    private var priorityFilterText: String {
+            switch viewModel.priorityFilter {
+            case nil: return "All Priorities"
+            case -1: return "No Priority"
+            case 0: return "Low"
+            case 1: return "Medium"
+            case 2: return "High"
+            default: return "Priority"
+            }
+        }
 }

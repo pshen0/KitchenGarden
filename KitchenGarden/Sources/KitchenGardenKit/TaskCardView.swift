@@ -2,6 +2,8 @@ import SwiftUI
 
 struct TaskCardView: View {
     let task: TasksModel
+    var onEdit: (() -> Void)?
+    var onDelete: (() -> Void)?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -12,9 +14,20 @@ struct TaskCardView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
+                
+                Menu {
+                    Button("Редактировать", systemImage: "pencil") {
+                        onEdit?()
+                    }
+                    
+                    Button("Удалить", systemImage: "trash", role: .destructive) {
+                        onDelete?()
+                    }
+                } label: {
                     Images.SystemImages.ellipsis
                         .foregroundColor(.gray)
+                        .frame(width: 24, height: 24)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
@@ -44,7 +57,7 @@ struct TaskCardView: View {
                     }
                 }
                 
-                if let priority = task.priority {
+                if task.priority != nil {
                     HStack(spacing: 6) {
                         Images.SystemImages.flag
                             .font(.caption)
@@ -66,8 +79,7 @@ struct TaskCardView: View {
         .cornerRadius(12)
         .onDrag {
             NSItemProvider(object: task.id.uuidString as NSString)
-        }
-    }
+        }    }
     
     private var priorityColor: Color {
         switch task.priority {

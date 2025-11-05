@@ -17,6 +17,9 @@ struct TaskColumnView: View {
     @State private var newTaskDeadline: Date = Date()
     @State private var hasDeadline = false
     
+    @State private var editingTask: TasksModel? = nil
+    @State private var showingEdit = false
+    
     
     init(title: String, color: Color, tasks: [TasksModel], columnStatus: TaskStatus, viewModel : TasksViewModelImpl) {
         self.title = title
@@ -40,6 +43,7 @@ struct TaskColumnView: View {
                             deadline: $newTaskDeadline,
                             hasDeadline: $hasDeadline,
                             columnStatus: columnStatus,
+                            mode: .create,
                             onSave: saveTask,
                             onCancel: {
                                 showingQuickAdd = false
@@ -48,8 +52,35 @@ struct TaskColumnView: View {
                         )
                     }
                     
+                    if showingEdit, let task = editingTask {
+                        TaskCardEditorView(
+                            title: $newTaskTitle,
+                            priority: $selectedPriority,
+                            tags: $newTaskTags,
+                            deadline: $newTaskDeadline,
+                            hasDeadline: $hasDeadline,
+                            columnStatus: columnStatus,
+                            mode: .edit,
+                            onSave: updateTask,
+                            onCancel: {
+                                showingEdit = false
+                                resetEditor()
+                            }
+                        )
+                    }
+                    
                     ForEach(tasks) { task in
-                        TaskCardView(task: task)
+                        if editingTask?.id != task.id {
+                            TaskCardView(
+                                task: task,
+                                onEdit: {
+                                    editTask(task)
+                                },
+                                onDelete: {
+                                    deleteTask(task)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -62,6 +93,41 @@ struct TaskColumnView: View {
         .onDrop(of: [.text], isTargeted: nil) { providers in
             handleDrop(providers: providers)
         }
+    }
+    
+    private func editTask(_ task: TasksModel) {
+        editingTask = task
+        newTaskTitle = task.title
+        selectedPriority = task.priority
+        newTaskTags = task.tags.joined(separator: ", ")
+        newTaskDeadline = task.deadline ?? Date()
+        hasDeadline = task.deadline != nil
+        showingEdit = true
+    }
+    
+    private func updateTask() {
+        guard let task = editingTask else { return }
+        
+        let tags = newTaskTags
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        
+        let updatedTask = TasksModel(
+            id: task.id,
+            title: newTaskTitle,
+            tags: tags,
+            priority: selectedPriority,
+            deadline: hasDeadline ? newTaskDeadline : nil,
+            status: task.status,
+            timeSpent: task.timeSpent
+        )
+        
+        viewModel.updateTask(updatedTask)
+        
+        showingEdit = false
+        resetEditor()
+        editingTask = nil
     }
     
     private func handleDrop(providers: [NSItemProvider]) -> Bool {
@@ -94,6 +160,11 @@ struct TaskColumnView: View {
         return success
     }
     
+    private func deleteTask(_ task: TasksModel) {
+        viewModel.deleteTask(task)
+        print("Удаляем задачу: \(task.title)")
+    }
+    
     private var headerView: some View {
         HStack {
             HStack(spacing: 8) {
@@ -116,6 +187,8 @@ struct TaskColumnView: View {
                 Images.SystemImages.plus
                     .font(.title2)
                     .foregroundColor(Colors.yellowStroke)
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(showingQuickAdd)

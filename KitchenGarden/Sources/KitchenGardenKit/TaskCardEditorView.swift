@@ -1,5 +1,10 @@
 import SwiftUI
 
+enum EditorMode {
+    case create
+    case edit
+}
+
 struct TaskCardEditorView: View {
     @Binding var title: String
     @Binding var priority: Int?
@@ -7,6 +12,7 @@ struct TaskCardEditorView: View {
     @Binding var deadline: Date
     @Binding var hasDeadline: Bool
     let columnStatus: TaskStatus
+    let mode: EditorMode
     let onSave: () -> Void
     let onCancel: () -> Void
     
@@ -142,13 +148,14 @@ struct TaskCardEditorView: View {
             }
             
             Button(action: onSave) {
-                Text("Создать задачу")
+                Text(buttonTitle)
                     .font(.caption)
                     .bold()
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .overlay(
@@ -178,6 +185,13 @@ struct TaskCardEditorView: View {
         }
     }
     
+    private var buttonTitle: String {
+            switch mode {
+            case .create: return "Создать задачу"
+            case .edit: return "Сохранить"
+            }
+        }
+    
     private var priorityColor: Color {
         switch priority {
         case 0: return Colors.greenAccent
@@ -194,3 +208,4 @@ struct TaskCardEditorView: View {
         return formatter.string(from: date)
     }
 }
+
