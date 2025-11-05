@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Group 291.png",
+      "filename" : "Frame 296.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,7 +12,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Group 292.png",
+      "filename" : "Frame 295.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -48,8 +48,5 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
-  },
-  "properties" : {
-    "localizable" : true
   }
 }

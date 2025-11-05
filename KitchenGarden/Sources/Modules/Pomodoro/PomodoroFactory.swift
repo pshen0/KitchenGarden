@@ -5,7 +5,7 @@ protocol PomodoroFactory {
     func makePomodoroScreen() ->  PomodoroView<PomodoroViewModelImpl>
 }
 
-struct PomodoroFactoryImpl: PomodoroFactory {
+final class PomodoroFactoryImpl: PomodoroFactory {
     
     // MARK: - Init
     
@@ -16,16 +16,23 @@ struct PomodoroFactoryImpl: PomodoroFactory {
     // MARK: - Public Methods
     
     func makePomodoroScreen() -> PomodoroView<PomodoroViewModelImpl> {
-        let router = PomodoroRouterImpl(
-            appRouter: externalDeps.appRouter
-        )
-        let interactor = PomodoroInteractorImpl()
-        let viewModel = PomodoroViewModelImpl(interactor: interactor, router: router)
-        let pomodoroView = PomodoroView(viewModel: viewModel)
+        let pomodoroView = PomodoroView(viewModel: sharedViewModel)
         return pomodoroView
     }
     
     // MARK: - Private Properties
     
     private let externalDeps: PomodoroExternalDeps
+
+    private lazy var sharedRouter: PomodoroRouter = {
+        PomodoroRouterImpl(appRouter: externalDeps.appRouter)
+    }()
+
+    private lazy var sharedInteractor: PomodoroInteractor = {
+        PomodoroInteractorImpl()
+    }()
+
+    private lazy var sharedViewModel: PomodoroViewModelImpl = {
+        PomodoroViewModelImpl(interactor: sharedInteractor, router: sharedRouter)
+    }()
 }

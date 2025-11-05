@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct SidebarView: View {
     @ObservedObject private var router: AppRouter
@@ -42,7 +43,6 @@ struct SidebarView: View {
             }
         }
         .listStyle(.sidebar)
-        .navigationTitle("Menu")
         .buttonStyle(PlainButtonStyle())
     }
     
