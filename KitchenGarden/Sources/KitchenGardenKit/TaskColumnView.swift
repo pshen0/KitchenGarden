@@ -1,80 +1,143 @@
 import SwiftUI
+import SwiftData
 
 struct TaskColumnView: View {
     let title: String
     let color: Color
+    let tasks: [TaskItem]
+    let columnStatus: TaskStatus
+    
+    @State private var showingQuickAdd = false
+    @State private var newTaskTitle = ""
+    @State private var selectedPriority = 1
+    @State private var newTaskTags = ""
+    @State private var newTaskDeadline: Date = Date()
+    @State private var hasDeadline = false
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    init(title: String, color: Color, tasks: [TaskItem], columnStatus: TaskStatus) {
+        self.title = title
+        self.color = color
+        self.tasks = tasks
+        self.columnStatus = columnStatus
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                HStack(spacing: 8) {
-                    statusIconView
-                    Text(title)
-                        .font(.title3)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Colors.yellowStroke, lineWidth: 1)
-                )
-                
-                Spacer()
-                
-                Button(action: {}) {
-                    Images.SystemImages.plus
-                        .font(.title2)
-                        .foregroundColor(Colors.yellowStroke)
-                }
-                .buttonStyle(.plain)
-            }
+            headerView
             
             ScrollView {
                 LazyVStack(spacing: 8) {
-                    // Временно добавляем тестовую карточку
-                    TaskCardView(task: testTask)
-                    TaskCardView(task: testTask)
-                    TaskCardView(task: testTask)
+                    if showingQuickAdd {
+                        TaskCardEditorView(
+                            title: $newTaskTitle,
+                            priority: $selectedPriority,
+                            tags: $newTaskTags,
+                            deadline: $newTaskDeadline,
+                            hasDeadline: $hasDeadline,
+                            columnStatus: columnStatus,
+                            onSave: saveTask,
+                            onCancel: {
+                                showingQuickAdd = false
+                                resetEditor()
+                            }
+                        )
+                    }
+                    
+                    ForEach(tasks) { task in
+                        TaskCardView(task: task)
+                    }
                 }
             }
             .frame(minHeight: 200)
         }
-        .frame(width: 280)
+        .frame(width: 320) 
         .padding()
         .background(Colors.yellowSecondary)
         .cornerRadius(12)
     }
     
+    private var headerView: some View {
+        HStack {
+            HStack(spacing: 8) {
+                statusIconView
+                Text(title)
+                    .font(.title3)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Colors.yellowStroke, lineWidth: 1)
+            )
+            
+            Spacer()
+            
+            Button(action: {
+                showingQuickAdd = true
+            }) {
+                Images.SystemImages.plus
+                    .font(.title2)
+                    .foregroundColor(Colors.yellowStroke)
+            }
+            .buttonStyle(.plain)
+            .disabled(showingQuickAdd)
+        }
+    }
+    
+    private func saveTask() {
+        guard !newTaskTitle.isEmpty else { return }
+        
+        let tags = newTaskTags
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        
+        let task = TaskItem(
+            title: newTaskTitle,
+            tags: tags,
+            priority: selectedPriority,
+            deadline: hasDeadline ? newTaskDeadline : nil,
+            status: columnStatus
+        )
+        
+        modelContext.insert(task)
+        
+        do {
+            try modelContext.save()
+            resetEditor()
+            showingQuickAdd = false
+        } catch {
+            print("Failed to save task: \(error)")
+        }
+    }
+    
+    private func resetEditor() {
+        newTaskTitle = ""
+        selectedPriority = 1
+        newTaskTags = ""
+        hasDeadline = false
+        newTaskDeadline = Date()
+    }
+    
     private var statusIconView: some View {
         Group {
-            switch title {
-            case "Created":
+            switch columnStatus {
+            case .created:
                 Image(systemName: "circle")
                     .foregroundColor(.white)
-            case "In Progress":
+            case .inProgress:
                 ZStack {
                     Image(systemName: "circle.lefthalf.filled")
                         .foregroundColor(Colors.yellowAccent)
                 }
-            case "Done":
+            case .completed:
                 Image(systemName: "circle.fill")
                     .foregroundColor(Colors.greenAccent)
-            default:
-                Image(systemName: "circle")
-                    .foregroundColor(.white)
             }
         }
         .font(.title3)
     }
 }
 
-private var testTask: TaskItem {
-    TaskItem(
-        title: "Add new homework",
-        tags: ["HSE"],
-        priority: 0,
-        deadline: Date().addingTimeInterval(86400),
-        status: .created,
-        timeSpent: 0
-    )
-}

@@ -9,64 +9,8 @@ struct TasksView<ViewModel: TasksViewModel>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Верхняя панель с Board и сортировкой
-            HStack {
-                // Board с иконкой кукурузы
-                HStack {
-                    Text("Board")
-                        .font(.title)
-                        .bold()
-                    Images.LocalImages.corn
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 42, height: 42)
-                }
-                .foregroundColor(.primary)
-                
-                
-                Spacer()
-                
-            }
-            .padding()
-            .background(Colors.yellowBackground)
-            
-            // Горизонтальный разделитель на весь экран
-            Rectangle()
-                .fill(Colors.yellowSecondary)
-                .frame(height: 1)
-                .padding(.horizontal, 16)
-            
-            HStack {
-                // Кнопка сортировки по приоритетам
-                Button(action: {}) {
-                                    HStack {
-                                        Text("Priority")
-                                        Images.SystemImages.chevronDown
-                                    }
-                                    .foregroundColor(.primary)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 4)
-                                }
-                                .buttonStyle(.plain)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Colors.yellowSecondary, lineWidth: 1)
-                                )
-                                .padding(.leading, 16)
-                                .padding(.top, 12)
-                                
-                                Spacer()
-            }
-            
-            
-            
-            // Kanban доска
-            HStack(alignment: .top, spacing: 16) {
-                TaskColumnView(title: "Created", color: Colors.yellowSecondary)
-                TaskColumnView(title: "In Progress", color: Colors.yellowSecondary)
-                TaskColumnView(title: "Done", color: Colors.yellowSecondary)
-            }
-            .padding()
+            TasksHeaderView()
+            TasksBoardView(tasks: viewModel.tasks)
         }
         .background(Colors.yellowBackground.ignoresSafeArea())
     }

@@ -2,29 +2,49 @@ import SwiftUI
 
 struct TasksHeaderView: View {
     var body: some View {
-        HStack {
-            Text("Задачи")
-                .font(.title2)
-                .bold()
+        VStack(spacing: 0) {
+            HStack {
+                HStack {
+                    Text("Board")
+                        .font(.title)
+                        .bold()
+                    Images.LocalImages.corn
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 42, height: 42)
+                }
+                .foregroundColor(.primary)
+                
+                Spacer()
+            }
+            .padding()
+            .background(Colors.yellowBackground)
             
-            Spacer()
+            Rectangle()
+                .fill(Colors.yellowSecondary)
+                .frame(height: 1)
+                .padding(.horizontal, 16)
             
-            Text("Все приоритеты")
-                .foregroundColor(.gray)
-            
-            Button(action: {}) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(Colors.yellowAccent)
+            HStack {
+                Button(action: {}) {
+                    HStack {
+                        Text("Priority")
+                        Images.SystemImages.chevronDown
+                    }
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                }
+                .buttonStyle(.plain)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Colors.yellowSecondary, lineWidth: 1)
+                )
+                .padding(.leading, 16)
+                .padding(.top, 12)
+                
+                Spacer()
             }
         }
-        .padding()
-        .background(Colors.yellowBackground)
-        .overlay(
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(Colors.yellowBackground),
-            alignment: .bottom
-        )
     }
 }
