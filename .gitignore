@@ -6,4 +6,4 @@
 
 # Xcode user data
 *.xcworkspace/
-xcuserdata/
+*.xcuserdata/
