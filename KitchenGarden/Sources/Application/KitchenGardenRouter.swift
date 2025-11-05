@@ -21,6 +21,7 @@ import SwiftUI
 final class AppRouter: ObservableObject {
     @Published var path: [AppRoute] = []
     @Published var presentedSheet: AppRoute?
+    @Published var isSidebarVisible: Bool = true
     
     func navigate(to route: AppRoute) {
         path.append(route)

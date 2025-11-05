@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var router: AppRouter
+    @State private var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
     private var diContainer: KitchenGardenDIContainer
     
     init(diContainer: KitchenGardenDIContainer) {
@@ -9,9 +10,9 @@ struct RootView: View {
     }
     
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             SidebarView(router: router)
-                .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 180)
         } detail: {
             NavigationStack(path: $router.path) {
                 diContainer.homeModuleFactory.makeHomeScreen()
@@ -26,6 +27,15 @@ struct RootView: View {
                         }
                     }
             }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea(.container, edges: .top)
+        .onAppear {
+            columnVisibility = .doubleColumn
+            router.isSidebarVisible = columnVisibility != .detailOnly
+        }
+        .onChange(of: columnVisibility) { newValue in
+            router.isSidebarVisible = newValue != .detailOnly
         }
     }
 }
