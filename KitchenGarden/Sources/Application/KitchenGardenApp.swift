@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import AppKit
+
 
 @main
 struct KitchenGardenApp: App {
@@ -32,9 +34,21 @@ struct KitchenGardenApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(diContainer: diContainer)
+                .frame(minWidth: 1000, minHeight: 500)
                 .environmentObject(router)
+                .onAppear {
+                    if let window = NSApplication.shared.windows.first , let screen = NSScreen.main {
+                        window.isRestorable = false
+                        let screenSize = screen.visibleFrame.size
+                        window.setContentSize(screenSize)
+                        window.center()
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
         .windowStyle(.hiddenTitleBar)
+        .commands {
+            SidebarCommands()
+        }
     }
 }
