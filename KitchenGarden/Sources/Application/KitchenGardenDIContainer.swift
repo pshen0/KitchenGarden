@@ -1,9 +1,13 @@
+import SwiftData
+
 @MainActor
 final class KitchenGardenDIContainer {
     let router: AppRouter
+    let modelContext: ModelContext
     
-    init(router: AppRouter) {
+    init(router: AppRouter, modelContext: ModelContext) {
         self.router = router
+        self.modelContext = modelContext
     }
     
     lazy var homeModuleFactory: HomeFactory = {
@@ -15,8 +19,11 @@ final class KitchenGardenDIContainer {
     }()
     
     lazy var tasksModuleFactory: TasksFactory = {
-        TasksFactoryImpl(externalDeps: TasksExternalDeps(appRouter: router))
-    }()
+            TasksFactoryImpl(externalDeps: TasksExternalDeps(
+                appRouter: router,
+                modelContext: modelContext
+            ))
+        }()
     
     lazy var pomodoroModuleFactory: PomodoroFactory = {
         PomodoroFactoryImpl(externalDeps: PomodoroExternalDeps(appRouter: router))

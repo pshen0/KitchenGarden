@@ -1,10 +1,6 @@
 import SwiftUI
-import SwiftData
-import Combine
 
 struct TasksView<ViewModel: TasksViewModel>: View {
-    
-    // MARK: - Internal Types
     @StateObject var viewModel: ViewModel
     
     init(viewModel: ViewModel) {
@@ -12,9 +8,11 @@ struct TasksView<ViewModel: TasksViewModel>: View {
     }
 
     var body: some View {
-        ZStack() {
-            Colors.yellowBackground
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            TasksHeaderView()
+                .environmentObject(viewModel as! TasksViewModelImpl)
+            TasksBoardView(tasks: viewModel.filteredTasks, viewModel: viewModel as! TasksViewModelImpl)
         }
+        .background(Colors.yellowBackground.ignoresSafeArea())
     }
 }
