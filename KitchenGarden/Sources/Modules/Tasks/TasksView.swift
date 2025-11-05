@@ -10,7 +10,7 @@ struct TasksView<ViewModel: TasksViewModel>: View {
     var body: some View {
         VStack(spacing: 0) {
             TasksHeaderView()
-            TasksBoardView(tasks: viewModel.tasks)
+            TasksBoardView(tasks: viewModel.tasks, viewModel: viewModel as! TasksViewModelImpl)
         }
         .background(Colors.yellowBackground.ignoresSafeArea())
     }

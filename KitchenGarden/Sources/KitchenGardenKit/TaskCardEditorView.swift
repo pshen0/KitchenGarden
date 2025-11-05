@@ -2,7 +2,7 @@ import SwiftUI
 
 struct TaskCardEditorView: View {
     @Binding var title: String
-    @Binding var priority: Int
+    @Binding var priority: Int?
     @Binding var tags: String
     @Binding var deadline: Date
     @Binding var hasDeadline: Bool
@@ -40,19 +40,6 @@ struct TaskCardEditorView: View {
                 .frame(height: 1)
             
             VStack(alignment: .leading, spacing: 8) {
-                Button(action: { cyclePriority() }) {
-                    HStack(spacing: 6) {
-                        Images.SystemImages.flag
-                            .font(.caption)
-                            .foregroundColor(priorityColor)
-                        Text(priorityText)
-                            .font(.caption)
-                        Spacer()
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                
                 Button(action: { editingTags.toggle() }) {
                     HStack(spacing: 6) {
                         Images.SystemImages.hashtag
@@ -68,7 +55,6 @@ struct TaskCardEditorView: View {
                                 .font(.caption)
                                 .foregroundColor(tags.isEmpty ? .gray : .primary)
                         }
-                        
                         Spacer()
                     }
                     .contentShape(Rectangle())
@@ -79,7 +65,7 @@ struct TaskCardEditorView: View {
                     HStack(spacing: 6) {
                         Images.SystemImages.calendar
                             .font(.caption)
-                            .foregroundColor(hasDeadline ? Colors.greenAccent : Colors.yellowAccent)
+                            .foregroundColor(Colors.yellowAccent)
                         
                         Text(hasDeadline ? formatDate(deadline) : "Добавить дедлайн")
                             .font(.caption)
@@ -95,6 +81,60 @@ struct TaskCardEditorView: View {
                         } else {
                             Spacer()
                         }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                
+                Menu {
+                    Button(action: { priority = nil }) {
+                        HStack {
+                            Text("No priority")
+                            Spacer()
+                            if priority == nil {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    Button(action: { priority = 0 }) {
+                        HStack {
+                            Text("Low")
+                            Spacer()
+                            if priority == 0 {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    Button(action: { priority = 1 }) {
+                        HStack {
+                            Text("Medium")
+                            Spacer()
+                            if priority == 1 {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    Button(action: { priority = 2 }) {
+                        HStack {
+                            Text("High")
+                            Spacer()
+                            if priority == 2 {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Images.SystemImages.flag
+                            .font(.caption)
+                            .foregroundColor(priorityColor)
+                        Text(priorityText)
+                            .font(.caption)
+                            .foregroundColor(priority == nil ? .gray : .primary)
+                        Spacer()
+                        Images.SystemImages.chevronDown
+                            .font(.caption2)
+                            .foregroundColor(.gray)
                     }
                     .contentShape(Rectangle())
                 }
@@ -129,16 +169,12 @@ struct TaskCardEditorView: View {
         .cornerRadius(12)
     }
     
-    private func cyclePriority() {
-        priority = (priority + 1) % 3
-    }
-    
     private var priorityText: String {
         switch priority {
         case 0: return "Low"
         case 1: return "Medium"
         case 2: return "High"
-        default: return ""
+        default: return "No priority"
         }
     }
     
@@ -147,7 +183,7 @@ struct TaskCardEditorView: View {
         case 0: return Colors.greenAccent
         case 1: return Colors.yellowAccent
         case 2: return Colors.redAccent
-        default: return Colors.yellowSecondary
+        default: return .gray
         }
     }
     

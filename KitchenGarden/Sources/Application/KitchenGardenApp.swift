@@ -9,12 +9,16 @@ struct KitchenGardenApp: App {
     init() {
         let router = AppRouter()
         self._router = StateObject(wrappedValue: router)
-        self.diContainer = KitchenGardenDIContainer(router: router)
+        
+        let modelContext = sharedModelContainer.mainContext
+            
+        self.diContainer = KitchenGardenDIContainer(router: router, modelContext: modelContext)
     }
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
+            TaskItem.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         

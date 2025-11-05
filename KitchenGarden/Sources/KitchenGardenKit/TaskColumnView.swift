@@ -1,26 +1,28 @@
 import SwiftUI
-import SwiftData
+import Combine
 
 struct TaskColumnView: View {
     let title: String
     let color: Color
-    let tasks: [TaskItem]
+    let tasks: [TasksModel]
     let columnStatus: TaskStatus
+    let viewModel: TasksViewModelImpl
+    
     
     @State private var showingQuickAdd = false
     @State private var newTaskTitle = ""
-    @State private var selectedPriority = 1
+    @State private var selectedPriority: Int? = nil
     @State private var newTaskTags = ""
     @State private var newTaskDeadline: Date = Date()
     @State private var hasDeadline = false
     
-    @Environment(\.modelContext) private var modelContext
     
-    init(title: String, color: Color, tasks: [TaskItem], columnStatus: TaskStatus) {
+    init(title: String, color: Color, tasks: [TasksModel], columnStatus: TaskStatus, viewModel : TasksViewModelImpl) {
         self.title = title
         self.color = color
         self.tasks = tasks
         self.columnStatus = columnStatus
+        self.viewModel = viewModel
     }
     
     var body: some View {
@@ -52,7 +54,7 @@ struct TaskColumnView: View {
             }
             .frame(minHeight: 200)
         }
-        .frame(width: 320) 
+        .frame(width: 320)
         .padding()
         .background(Colors.yellowSecondary)
         .cornerRadius(12)
@@ -94,7 +96,7 @@ struct TaskColumnView: View {
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
         
-        let task = TaskItem(
+        let task = TasksModel(
             title: newTaskTitle,
             tags: tags,
             priority: selectedPriority,
@@ -102,20 +104,15 @@ struct TaskColumnView: View {
             status: columnStatus
         )
         
-        modelContext.insert(task)
+        viewModel.addTask(task)  
         
-        do {
-            try modelContext.save()
-            resetEditor()
-            showingQuickAdd = false
-        } catch {
-            print("Failed to save task: \(error)")
-        }
+        resetEditor()
+        showingQuickAdd = false
     }
     
     private func resetEditor() {
         newTaskTitle = ""
-        selectedPriority = 1
+        selectedPriority = nil
         newTaskTags = ""
         hasDeadline = false
         newTaskDeadline = Date()
@@ -140,4 +137,3 @@ struct TaskColumnView: View {
         .font(.title3)
     }
 }
-

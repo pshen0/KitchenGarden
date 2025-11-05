@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TaskCardView: View {
-    let task: TaskItem
+    let task: TasksModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -44,12 +44,15 @@ struct TaskCardView: View {
                     }
                 }
                 
-                HStack(spacing: 6) {
-                    Images.SystemImages.flag
-                        .font(.caption)
-                        .foregroundColor(Colors.yellowAccent)
-                    Text(priorityText)
-                        .font(.caption)
+                
+                if let priority = task.priority {
+                    HStack(spacing: 6) {
+                        Images.SystemImages.flag
+                            .font(.caption)
+                            .foregroundColor(priorityColor)
+                        Text(priorityText)
+                            .font(.caption)
+                    }
                 }
             }
         }

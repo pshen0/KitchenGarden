@@ -21,7 +21,7 @@ struct TasksFactoryImpl: TasksFactory {
             appRouter: externalDeps.appRouter
         )
         let interactor = TasksInteractorImpl()
-        let viewModel = TasksViewModelImpl(interactor: interactor, router: router)
+        let viewModel = TasksViewModelImpl(interactor: interactor, router: router, modelContext: externalDeps.modelContext)
         let tasksView = TasksView(viewModel: viewModel)
         return tasksView
     }
