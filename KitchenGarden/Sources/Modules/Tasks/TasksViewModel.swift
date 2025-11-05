@@ -50,6 +50,32 @@ final class TasksViewModelImpl: TasksViewModel {
             }
         }
     
+    func updateTask(_ task: TasksModel) {
+            do {
+                let descriptor = FetchDescriptor<TaskItem>()
+                let taskItems = try modelContext.fetch(descriptor)
+                
+                if let taskItem = taskItems.first(where: { $0.id == task.id }) {
+                    taskItem.title = task.title
+                    taskItem.tags = task.tags
+                    taskItem.priority = task.priority
+                    taskItem.deadline = task.deadline
+                    taskItem.status = task.status
+                    taskItem.timeSpent = task.timeSpent
+                    taskItem.updatedAt = Date()
+                    
+                    try modelContext.save()
+                    
+                    // Обновляем локальный массив
+                    if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+                        tasks[index] = task
+                    }
+                }
+            } catch {
+                print("Failed to update task: \(error)")
+            }
+        }
+    
     // MARK: - Private Properties
     
     private let interactor: TasksInteractor

@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+internal import UniformTypeIdentifiers
 
 struct TaskColumnView: View {
     let title: String
@@ -58,6 +59,39 @@ struct TaskColumnView: View {
         .padding()
         .background(Colors.yellowSecondary)
         .cornerRadius(12)
+        .onDrop(of: [.text], isTargeted: nil) { providers in
+            handleDrop(providers: providers)
+        }
+    }
+    
+    private func handleDrop(providers: [NSItemProvider]) -> Bool {
+        guard let provider = providers.first else { return false }
+        
+        var success = false
+        
+        provider.loadObject(ofClass: NSString.self) { reading, error in
+            guard let taskIDString = reading as? String,
+                  let taskID = UUID(uuidString: taskIDString) else { return }
+            
+            DispatchQueue.main.async {
+                if let task = viewModel.tasks.first(where: { $0.id == taskID }) {
+                    let updatedTask = TasksModel(
+                        id: task.id,
+                        title: task.title,
+                        tags: task.tags,
+                        priority: task.priority,
+                        deadline: task.deadline,
+                        status: self.columnStatus,
+                        timeSpent: task.timeSpent
+                    )
+                    
+                    self.viewModel.updateTask(updatedTask)
+                    success = true
+                }
+            }
+        }
+        
+        return success
     }
     
     private var headerView: some View {

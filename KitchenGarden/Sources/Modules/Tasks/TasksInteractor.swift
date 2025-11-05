@@ -17,6 +17,7 @@ final class TasksInteractorImpl: TasksInteractor {
     
     func toBusinessModel(_ taskItem: TaskItem) -> TasksModel {
         return TasksModel(
+            id: taskItem.id,
             title: taskItem.title,
             tags: taskItem.tags,
             priority: taskItem.priority,
@@ -28,6 +29,7 @@ final class TasksInteractorImpl: TasksInteractor {
     
     func toDataModel(_ tasksModel: TasksModel) -> TaskItem {
         return TaskItem(
+            id: tasksModel.id,
             title: tasksModel.title,
             tags: tasksModel.tags,
             priority: tasksModel.priority,

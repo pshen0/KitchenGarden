@@ -3,6 +3,7 @@ import SwiftData
 
 @Model
 final class TaskItem {
+    var id: UUID
     var title: String
     var tags: [String]
     var priority: Int?
@@ -12,9 +13,10 @@ final class TaskItem {
     var createdAt: Date
     var updatedAt: Date
     
-    init(title: String, tags: [String] = [], priority: Int? = nil,
+    init(id: UUID = UUID(), title: String, tags: [String] = [], priority: Int? = nil,
          deadline: Date? = nil, status: TaskStatus = .created,
          timeSpent: TimeInterval = 0) {
+        self.id = id
         self.title = title
         self.tags = tags
         self.priority = priority

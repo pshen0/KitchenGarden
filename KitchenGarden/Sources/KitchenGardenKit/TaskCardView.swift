@@ -44,7 +44,6 @@ struct TaskCardView: View {
                     }
                 }
                 
-                
                 if let priority = task.priority {
                     HStack(spacing: 6) {
                         Images.SystemImages.flag
@@ -65,6 +64,9 @@ struct TaskCardView: View {
             )
         )
         .cornerRadius(12)
+        .onDrag {
+            NSItemProvider(object: task.id.uuidString as NSString)
+        }
     }
     
     private var priorityColor: Color {
