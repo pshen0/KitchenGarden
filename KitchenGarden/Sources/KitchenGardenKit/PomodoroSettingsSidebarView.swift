@@ -7,7 +7,6 @@ struct PomodoroSettingsSidebarView<ViewModel: PomodoroViewModel>: View {
     var body: some View {
         if isVisible {
             List {
-                
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Task Name")
                         .font(.headline)

@@ -1,8 +1,9 @@
 import SwiftUI
+import SwiftData
 
 @MainActor
 protocol TasksFactory {
-    func makeTasksScreen() ->  TasksView<TasksViewModelImpl>
+    func makeTasksScreen() -> TasksView<TasksViewModelImpl>
 }
 
 struct TasksFactoryImpl: TasksFactory {
@@ -20,7 +21,7 @@ struct TasksFactoryImpl: TasksFactory {
             appRouter: externalDeps.appRouter
         )
         let interactor = TasksInteractorImpl()
-        let viewModel = TasksViewModelImpl(interactor: interactor, router: router)
+        let viewModel = TasksViewModelImpl(interactor: interactor, router: router, modelContext: externalDeps.modelContext)
         let tasksView = TasksView(viewModel: viewModel)
         return tasksView
     }
