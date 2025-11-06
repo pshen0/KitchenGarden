@@ -1,8 +1,16 @@
 import SwiftUI
 import AppKit
+import SwiftData
 
 final class LauncherWindowManager {
     private var panel: NSPanel?
+    private let router: AppRouter
+    private let modelContainer: ModelContainer
+
+    init(router: AppRouter, modelContainer: ModelContainer) {
+        self.router = router
+        self.modelContainer = modelContainer
+    }
     
     func toggleLauncher() {
         if let window = self.panel, window.isVisible {
@@ -15,6 +23,8 @@ final class LauncherWindowManager {
     private func showLauncher() {
         if self.panel == nil {
             let contentView = LauncherView()
+                .environmentObject(router)
+                .modelContainer(modelContainer)
             
             let hostingController = NSHostingController(rootView: contentView)
             
@@ -25,6 +35,7 @@ final class LauncherWindowManager {
                 defer: false
             )
             
+            panel.title = "LauncherWindow"
             panel.isFloatingPanel = true
             panel.hidesOnDeactivate = false
             panel.titleVisibility = .hidden
@@ -46,12 +57,36 @@ final class LauncherWindowManager {
         
         panel?.makeKeyAndOrderFront(nil)
         panel?.orderFrontRegardless()
-        panel?.makeFirstResponder(panel?.contentView)
+        
+        // Ensure we activate the app and focus the text field
         NSApp.activate(ignoringOtherApps: true)
+        
+        // Find and focus the text field, searching deeper in the view hierarchy
+        DispatchQueue.main.async {
+            if let panel = self.panel,
+               let hostingView = panel.contentView?.subviews.first,
+               let textField = self.findTextField(in: hostingView) {
+                panel.makeFirstResponder(textField)
+            }
+        }
 
     }
     
     func closeLauncher() {
         panel?.orderOut(nil)
+    }
+    
+    private func findTextField(in view: NSView) -> NSTextField? {
+        if let textField = view as? NSTextField {
+            return textField
+        }
+        
+        for subview in view.subviews {
+            if let textField = findTextField(in: subview) {
+                return textField
+            }
+        }
+        
+        return nil
     }
 }

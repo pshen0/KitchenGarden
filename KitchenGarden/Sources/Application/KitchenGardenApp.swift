@@ -7,14 +7,18 @@ import AppKit
 struct KitchenGardenApp: App {
     @StateObject private var router: AppRouter
     private var diContainer: KitchenGardenDIContainer
+    // Keep a reference to LauncherHotkeyManager to ensure it stays active
+    private var hotkeyManager: LauncherHotkeyManager!
     
     init() {
         let router = AppRouter()
         self._router = StateObject(wrappedValue: router)
-        
         let modelContext = sharedModelContainer.mainContext
-            
+        
         self.diContainer = KitchenGardenDIContainer(router: router, modelContext: modelContext)
+            
+        // Initialize hotkeyManager after router and modelContext are created
+        self.hotkeyManager = LauncherHotkeyManager(router: router, modelContainer: sharedModelContainer)
     }
     
     var sharedModelContainer: ModelContainer = {

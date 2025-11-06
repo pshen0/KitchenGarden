@@ -2,15 +2,18 @@ import AppKit
 import SwiftUI
 import Combine
 import Cocoa
+import SwiftData
 
 final class LauncherHotkeyManager: ObservableObject {
-    private let windowManager = LauncherWindowManager()
+    private let windowManager: LauncherWindowManager
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
 
-    init() {
+    init(router: AppRouter, modelContainer: ModelContainer) {
+        self.windowManager = LauncherWindowManager(router: router, modelContainer: modelContainer)
         setupHotkeyTap()
     }
+
 
     private func setupHotkeyTap() {
         let eventMask = (1 << CGEventType.keyDown.rawValue)

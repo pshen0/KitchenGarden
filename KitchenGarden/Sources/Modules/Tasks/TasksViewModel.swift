@@ -4,7 +4,7 @@ import SwiftData
 
 @MainActor
 protocol TasksViewModel: ObservableObject {
-    var tasks: [TasksModel] { get }
+    var tasks: [TasksModel] { get set }
     var filteredTasks: [TasksModel] { get }
     var priorityFilter: Int? { get set }
     func fetchTasks()
@@ -37,11 +37,18 @@ final class TasksViewModelImpl: TasksViewModel {
     // MARK: - Init
     
     init(interactor: TasksInteractor, router: TasksRouter, modelContext: ModelContext) {
-            self.interactor = interactor
-            self.router = router
-            self.modelContext = modelContext
-            fetchTasks()
-        }
+        self.interactor = interactor
+        self.router = router
+        self.modelContext = modelContext
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc private func handleTaskCreated(_ notification: Notification) {
+        fetchTasks()
+    }
     
     // MARK: - Public Methods
     
@@ -115,4 +122,5 @@ final class TasksViewModelImpl: TasksViewModel {
     private let interactor: TasksInteractor
     private let router: TasksRouter
     private let modelContext: ModelContext
+
 }
