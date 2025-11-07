@@ -68,7 +68,7 @@ struct ClipboardView<ViewModel: ClipboardViewModel>: View {
                         .frame(width: 150)
                     ThoughtBubbleView()
                         .frame(maxWidth: 220)
-                        .padding(.leading, -110)
+                        .padding(.leading, -100)
                         .padding(.top, -50)
             }
         }

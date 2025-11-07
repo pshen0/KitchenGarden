@@ -4,8 +4,8 @@ struct ThoughtBubbleView: View {
     private enum Constants {
         static let texts: [String] = ["⌘ 1-3 - pinned", "⌘ 4-8 - recent"]
         
-        static let showDuration: TimeInterval = 1.6
-        static let pauseDuration: TimeInterval = 2.0
+        static let showDuration: TimeInterval = 5
+        static let pauseDuration: TimeInterval = 3.0
         static let appearDelay: UInt64 = 200_000_000
         
         static let initialScale: CGFloat = 0.85
