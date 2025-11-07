@@ -6,7 +6,7 @@ enum LauncherCommand: String, CaseIterable {
     case clipboard
     case pomodoro
     case help
-    case task // Special case for task creation command
+    case task
     
     var description: String {
         switch self {
@@ -31,7 +31,6 @@ enum LauncherCommand: String, CaseIterable {
     }
     
     static func parseTaskCommand(_ input: String) -> TaskInfo? {
-        // Pattern matches: task {name} {dd.MM.yyyy} {HH:mm} [!1-3] [#tag1 #tag2 ...]
         let pattern = #"^task\s+([^\{]*?)\s+(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2})(?:\s+!([1-3]))?\s*((?:#\w+\s*)*)$"#
         
         guard let regex = try? NSRegularExpression(pattern: pattern),

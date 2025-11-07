@@ -57,11 +57,9 @@ final class LauncherWindowManager {
         
         panel?.makeKeyAndOrderFront(nil)
         panel?.orderFrontRegardless()
-        
-        // Ensure we activate the app and focus the text field
+
         NSApp.activate(ignoringOtherApps: true)
-        
-        // Find and focus the text field, searching deeper in the view hierarchy
+
         DispatchQueue.main.async {
             if let panel = self.panel,
                let hostingView = panel.contentView?.subviews.first,

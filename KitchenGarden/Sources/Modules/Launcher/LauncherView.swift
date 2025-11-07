@@ -31,7 +31,7 @@ struct LauncherView: View {
                     }
                     .onAppear {
                         commandText = ""
-                        showingHelp = false // Close help sheet when launcher is opened
+                        showingHelp = false
                         showError = false
                         errorMessage = nil
                     }
@@ -57,11 +57,9 @@ struct LauncherView: View {
     
     private func handleCommand() {
         let command = commandText.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // First try to parse as a task creation command
+
         if command.lowercased().starts(with: "task ") {
             if let taskInfo = LauncherCommand.parseTaskCommand(command) {
-                // Validate task data
                 if taskInfo.name.isEmpty {
                     showError(message: "Task name cannot be empty")
                     return
@@ -71,16 +69,13 @@ struct LauncherView: View {
                     showError(message: "Task deadline must be in the future")
                     return
                 }
-                
-                // Navigate to tasks and create new task
+
                 router.navigate(to: .tasks)
-                
-                // Create task in the next run loop to ensure ModelContext is ready
+
                 DispatchQueue.main.async {
                     createTask(info: taskInfo)
                 }
-                
-                // Clear successful command
+
                 commandText = ""
                 activateMainWindow()
                 return
@@ -89,8 +84,7 @@ struct LauncherView: View {
                 return
             }
         }
-        
-        // If not a task command, try other commands
+
         if let launcherCommand = LauncherCommand(rawValue: command.lowercased()) {
             switch launcherCommand {
             case .home:

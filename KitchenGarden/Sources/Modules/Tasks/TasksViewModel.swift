@@ -91,7 +91,6 @@ final class TasksViewModelImpl: TasksViewModel {
                 
                 try modelContext.save()
                 
-                // Обновляем локальный массив
                 if let index = tasks.firstIndex(where: { $0.id == task.id }) {
                     tasks[index] = task
                 }
