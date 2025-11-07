@@ -33,6 +33,10 @@ final class PomodoroFactoryImpl: PomodoroFactory {
     }()
 
     private lazy var sharedViewModel: PomodoroViewModelImpl = {
-        PomodoroViewModelImpl(interactor: sharedInteractor, router: sharedRouter)
+        PomodoroViewModelImpl(
+            interactor: sharedInteractor,
+            router: sharedRouter,
+            modelContext: externalDeps.modelContext
+        )
     }()
 }

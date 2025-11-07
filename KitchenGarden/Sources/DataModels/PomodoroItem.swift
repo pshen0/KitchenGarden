@@ -1,23 +1,25 @@
 import Foundation
+import SwiftData
 
-struct PomodoroModel: Identifiable {
-    let id: UUID
-    let taskId: UUID?
-    let startTime: Date
-    let endTime: Date
-    let actualWorkTime: TimeInterval
-    let targetWorkTime: TimeInterval
-    let completedIntervals: Int
-    let totalIntervals: Int
+@Model
+final class PomodoroItem {
+    var id: UUID
+    var taskId: UUID?
+    var startTime: Date
+    var endTime: Date
+    var actualWorkTime: TimeInterval
+    var targetWorkTime: TimeInterval
+    var completedIntervals: Int
+    var totalIntervals: Int
     
     init(id: UUID = UUID(),
          taskId: UUID? = nil,
-         startTime: Date,
-         endTime: Date,
+         startTime: Date = Date(),
+         endTime: Date = Date(),
          actualWorkTime: TimeInterval,
          targetWorkTime: TimeInterval,
-         completedIntervals: Int,
-         totalIntervals: Int) {
+         completedIntervals: Int = 1,
+         totalIntervals: Int = 1) {
         self.id = id
         self.taskId = taskId
         self.startTime = startTime
@@ -29,7 +31,7 @@ struct PomodoroModel: Identifiable {
     }
 }
 
-extension PomodoroModel {
+extension PomodoroItem {
     var totalDuration: TimeInterval {
         return endTime.timeIntervalSince(startTime)
     }
@@ -41,13 +43,5 @@ extension PomodoroModel {
     
     var actualWorkTimeInMinutes: Int {
         return Int(actualWorkTime / 60)
-    }
-    
-    var actualWorkTimeInHours: Double {
-        return actualWorkTime / 3600
-    }
-    
-    var isCompleted: Bool {
-        return completedIntervals >= totalIntervals
     }
 }
