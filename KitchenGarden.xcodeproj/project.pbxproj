@@ -33,6 +33,7 @@
 			isa = PBXGroup;
 			children = (
 				0F4FA2662EA589F700DC9F05 /* KitchenGarden */,
+				D5C529342EBD464800E3177F /* Frameworks */,
 				0F4FA2652EA589F700DC9F05 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +44,13 @@
 				0F4FA2642EA589F700DC9F05 /* KitchenGarden.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D5C529342EBD464800E3177F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -94,6 +102,8 @@
 			);
 			mainGroup = 0F4FA25B2EA589F700DC9F05;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0F4FA2652EA589F700DC9F05 /* Products */;
 			projectDirPath = "";
@@ -254,7 +264,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = D29HMVXL7B;
+				DEVELOPMENT_TEAM = 6B6VK78D5Q;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -288,7 +298,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = D29HMVXL7B;
+				DEVELOPMENT_TEAM = 6B6VK78D5Q;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

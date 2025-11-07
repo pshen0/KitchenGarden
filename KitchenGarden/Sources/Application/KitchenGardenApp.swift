@@ -7,6 +7,7 @@ import AppKit
 struct KitchenGardenApp: App {
     @StateObject private var router: AppRouter
     private var diContainer: KitchenGardenDIContainer
+    private var clipboardHotkeyManager: ClipboardHotkeyManager!
     private var hotkeyManager: LauncherHotkeyManager!
     
     init() {
@@ -15,6 +16,8 @@ struct KitchenGardenApp: App {
         let modelContext = sharedModelContainer.mainContext
         
         self.diContainer = KitchenGardenDIContainer(router: router, modelContext: modelContext)
+        
+        self.clipboardHotkeyManager = ClipboardHotkeyManager(modelContext: modelContext)
             
         self.hotkeyManager = LauncherHotkeyManager(router: router, modelContainer: sharedModelContainer)
     }
@@ -23,6 +26,7 @@ struct KitchenGardenApp: App {
         let schema = Schema([
             Item.self,
             TaskItem.self,
+            ClipboardItem.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         

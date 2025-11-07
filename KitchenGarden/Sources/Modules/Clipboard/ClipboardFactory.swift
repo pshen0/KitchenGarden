@@ -1,8 +1,9 @@
 import SwiftUI
+import SwiftData
 
 @MainActor
 protocol ClipboardFactory {
-    func makeClipboardScreen() ->  ClipboardView<ClipboardViewModelImpl>
+    func makeClipboardScreen() -> ClipboardView<ClipboardViewModelImpl>
 }
 
 struct ClipboardFactoryImpl: ClipboardFactory {
@@ -20,9 +21,9 @@ struct ClipboardFactoryImpl: ClipboardFactory {
             appRouter: externalDeps.appRouter
         )
         let interactor = ClipboardInteractorImpl()
-        let viewModel = ClipboardViewModelImpl(interactor: interactor, router: router)
-        let сlipboardView = ClipboardView(viewModel: viewModel)
-        return сlipboardView
+        let viewModel = ClipboardViewModelImpl(interactor: interactor, router: router, modelContext: externalDeps.modelContext)
+        let clipboardView = ClipboardView(viewModel: viewModel)
+        return clipboardView
     }
     
     // MARK: - Private Properties

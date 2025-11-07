@@ -79,7 +79,8 @@ struct TaskCardView: View {
         .cornerRadius(12)
         .onDrag {
             NSItemProvider(object: task.id.uuidString as NSString)
-        }    }
+        }
+    }
     
     private var priorityColor: Color {
         switch task.priority {

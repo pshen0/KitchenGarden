@@ -52,7 +52,7 @@ struct TaskColumnView: View {
                         )
                     }
                     
-                    if showingEdit, let task = editingTask {
+                    if showingEdit {
                         TaskCardEditorView(
                             title: $newTaskTitle,
                             priority: $selectedPriority,
