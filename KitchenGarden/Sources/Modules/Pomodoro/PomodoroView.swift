@@ -33,7 +33,7 @@ struct PomodoroView<ViewModel: PomodoroViewModel>: View {
                     .frame(height: min(geometry.size.width * 0.05, geometry.size.height * 0.08) * 2 + geometry.size.height * 0.02)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.top, geometry.size.height * 0.07)
-                    .padding(.trailing, 5)
+                    .padding(.trailing, 10)
                     
                     Spacer()
                     
