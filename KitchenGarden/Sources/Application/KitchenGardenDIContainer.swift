@@ -15,15 +15,17 @@ final class KitchenGardenDIContainer {
     }()
     
     lazy var clipboardModuleFactory: ClipboardFactory = {
-        ClipboardFactoryImpl(externalDeps: ClipboardExternalDeps(appRouter: router))
+        ClipboardFactoryImpl(externalDeps: ClipboardExternalDeps(
+            appRouter: router,
+            modelContext: modelContext))
     }()
     
     lazy var tasksModuleFactory: TasksFactory = {
-            TasksFactoryImpl(externalDeps: TasksExternalDeps(
-                appRouter: router,
-                modelContext: modelContext
-            ))
-        }()
+        TasksFactoryImpl(externalDeps: TasksExternalDeps(
+            appRouter: router,
+            modelContext: modelContext
+        ))
+    }()
     
     lazy var pomodoroModuleFactory: PomodoroFactory = {
         PomodoroFactoryImpl(externalDeps: PomodoroExternalDeps(appRouter: router))
