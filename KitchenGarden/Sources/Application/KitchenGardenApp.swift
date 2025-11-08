@@ -27,6 +27,7 @@ struct KitchenGardenApp: App {
             Item.self,
             TaskItem.self,
             ClipboardItem.self,
+            PomodoroItem.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         

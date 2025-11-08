@@ -44,7 +44,7 @@ extension PomodoroModel {
     }
     
     var actualWorkTimeInHours: Double {
-        return actualWorkTime / 3600
+        return actualWorkTime / 3600.0
     }
     
     var isCompleted: Bool {

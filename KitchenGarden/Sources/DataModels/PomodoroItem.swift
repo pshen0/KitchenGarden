@@ -44,4 +44,8 @@ extension PomodoroItem {
     var actualWorkTimeInMinutes: Int {
         return Int(actualWorkTime / 60)
     }
+    
+    var actualWorkTimeInHours: Double {
+        return actualWorkTime / 3600.0
+    }
 }

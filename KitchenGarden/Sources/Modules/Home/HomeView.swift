@@ -196,7 +196,7 @@ struct HomeView<ViewModel: HomeViewModelImpl>: View {
 
                 Spacer()
 
-                HStack(alignment: .bottom, spacing: 20) {
+                HStack(alignment: .bottom, spacing: 16) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Total focus: \(viewModel.stats.totalTimeString)")
                             .font(.system(size: 20))
@@ -214,32 +214,55 @@ struct HomeView<ViewModel: HomeViewModelImpl>: View {
                     let numberOfBars = CGFloat(viewModel.stats.chartData.count)
                     let barWidth = (chartWidth - (numberOfBars - 1) * spacing) / numberOfBars
 
-                    let maxValue = (viewModel.stats.chartData.map { $0.value }.max() ?? 1)
-
-                    HStack(alignment: .bottom, spacing: spacing) {
-                        ForEach(viewModel.stats.chartData, id: \.period) { bar in
-                            @State var isHovered = false
-                            
-                            VStack {
-                                if isHovered {
-                                    Text(bar.valueString)
-                                        .font(.caption2)
-                                }
+                    let maxValue = max(viewModel.stats.chartData.map { $0.value }.max() ?? 1, 1) // ← Защита от 0
+                    
+                    let timeMarkers = [0, maxValue/2, maxValue].map { Int($0) }
+                    
+                    VStack(spacing: 8) {
+                        // График
+                        HStack(alignment: .bottom, spacing: spacing) {
+                            ForEach(viewModel.stats.chartData, id: \.period) { bar in
+                                @State var isHovered = false
                                 
-                                Rectangle()
-                                    .fill(Colors.greenAccent)
-                                    .frame(
-                                        width: barWidth,
-                                        height: CGFloat(bar.value) / CGFloat(maxValue) * chartHeight
-                                    )
-                                    .onHover { hovering in
-                                        isHovered = hovering
+                                VStack {
+                                    Rectangle()
+                                        .fill(Colors.greenAccent)
+                                        .frame(
+                                            width: barWidth,
+                                            height: max(8, CGFloat(bar.value) / CGFloat(maxValue) * chartHeight) // ← Минимальная высота 8
+                                        )
+                                        .cornerRadius(2) // ← Закругленные углы
+                                        .onHover { hovering in
+                                            isHovered = hovering
+                                        }
+                                    
+                                    if isHovered {
+                                        Text("\(bar.valueString)m") // ← Показываем минуты
+                                            .font(.caption2)
+                                            .foregroundColor(.primary)
+                                            .padding(4)
+                                            .background(Color.secondary.opacity(0.1))
+                                            .cornerRadius(4)
                                     }
+                                }
+                                .animation(.easeInOut(duration: 0.15), value: isHovered)
                             }
-                            .animation(.easeInOut(duration: 0.15), value: isHovered)
                         }
+                        .frame(width: chartWidth, height: chartHeight)
+                        
+                        // Подписи периодов
+                        HStack(alignment: .top, spacing: spacing) {
+                            ForEach(viewModel.stats.chartData, id: \.period) { bar in
+                                Text(bar.period)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                    .frame(width: barWidth)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                            }
+                        }
+                        .frame(width: chartWidth)
                     }
-                    .frame(width: chartWidth, height: chartHeight)
                 }
                 .padding(.top, 12)
             }
