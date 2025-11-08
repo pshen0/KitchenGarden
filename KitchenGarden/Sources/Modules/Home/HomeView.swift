@@ -9,39 +9,47 @@ struct HomeView<ViewModel: HomeViewModelImpl>: View {
     }
     
     var body: some View {
-        ZStack {
-            Colors.neutralBackground
-                .ignoresSafeArea()
-            
-            Grid(horizontalSpacing: 16, verticalSpacing: 16) {
-                GridRow {
-                    VStack {
-                        Text("Kitchen Garden")
-                            .bold()
-                            .font(.system(size: 45))
-                        Spacer()
-                        Images.LocalImages.vegetables
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 250)
-                        Spacer()
+        GeometryReader { geo in
+            ScrollView {
+                VStack(spacing: 20) {
+                    HStack(spacing: 10) {
+                        VStack {
+                            Text("Kitchen Garden")
+                                .bold()
+                                .font(.system(size: 40))
+                            Images.LocalImages.vegetables
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxHeight: 200)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .background(Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .shadow(radius: 4)
+                        TasksCardView(viewModel: viewModel)
+                            .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: 500, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity)
+                    .flexibleLayout(for: geo.size.width)
                     
-                    TasksCardView(viewModel: viewModel)
+                    HStack(spacing: 10) {
+                        PomodoroCardView(action: viewModel.routeToPomodoro)
+                            .frame(maxWidth: .infinity)
+                        StatsCardView(viewModel: viewModel)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .flexibleLayout(for: geo.size.width)
                 }
-                
-                GridRow {
-                    PomodoroCardView(action: viewModel.routeToPomodoro)
-                    StatsCardView(viewModel: viewModel)
-                }
+                .padding(10)
             }
-            .padding(20)
+            .background(Colors.neutralBackground.ignoresSafeArea())
         }
         .onAppear {
             viewModel.loadTasks()
         }
     }
+
     
     struct TasksCardView: View {
         @ObservedObject var viewModel: HomeViewModelImpl
@@ -103,7 +111,7 @@ struct HomeView<ViewModel: HomeViewModelImpl>: View {
                 Spacer()
             }
             .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: 800, height: 350)
             .background(Colors.systemSecondaryBackground)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .shadow(radius: 4)
@@ -152,7 +160,7 @@ struct HomeView<ViewModel: HomeViewModelImpl>: View {
                 .buttonStyle(.plain)
                 Spacer()
             }
-            .frame(maxWidth: 500, maxHeight: .infinity)
+            .frame(width: 400, height: 350)
             .background(Colors.systemSecondaryBackground)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .shadow(radius: 4)
@@ -267,10 +275,24 @@ struct HomeView<ViewModel: HomeViewModelImpl>: View {
                 .padding(.top, 12)
             }
             .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: 800, height: 350)
             .background(Colors.systemSecondaryBackground)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .shadow(radius: 4)
+        }
+    }
+}
+
+extension View {
+    func flexibleLayout(for width: CGFloat, breakpoint: CGFloat = 900) -> some View {
+        Group {
+            if width > breakpoint {
+                self
+            } else {
+                VStack(spacing: 20) {
+                    self
+                }
+            }
         }
     }
 }
