@@ -110,6 +110,7 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
             isBreakPeriod = false
             remainingTime = workDuration
             startTime = Date()
+            currentSessionStartTime = Date()
         } else if let pausedTime = pausedTime {
             let currentDuration = isBreakPeriod ? breakDuration : workDuration
             startTime = Date().addingTimeInterval(-(currentDuration - pausedTime))
@@ -166,6 +167,8 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
                 actualWorkTime = workDuration
             }
             
+            savePomodoroSession(actualWorkTime: actualWorkTime)
+            
             if let task = selectedTask {
                 task.timeSpent += actualWorkTime
                 task.updatedAt = Date()
@@ -188,6 +191,7 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
                 isBreakPeriod = false
                 remainingTime = workDuration
                 startTime = nil
+                currentSessionStartTime = nil
             } else {
                 completedWorkSessions = min(completedWorkSessions + 1, totalWorkSessions)
                 isBreakPeriod = false
@@ -209,6 +213,7 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
                 isBreakPeriod = false
                 remainingTime = workDuration
                 startTime = nil
+                currentSessionStartTime = nil
                 completedWorkSessions = 1
             } else {
                 isBreakPeriod = true
@@ -225,6 +230,7 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
     private let router: PomodoroRouter
     private var startTime: Date?
     private var pausedTime: TimeInterval?
+    private var currentSessionStartTime: Date?
     private var cancellables = Set<AnyCancellable>()
     private let modelContext: ModelContext
     
@@ -254,6 +260,8 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
                     // авто завершение рабочей сессии
                     let actualWorkTime = workDuration // полное время работы
                     
+                    savePomodoroSession(actualWorkTime: actualWorkTime)
+                    
                     // сохраняем время в задачу
                     if let task = selectedTask {
                         task.timeSpent += actualWorkTime
@@ -274,6 +282,7 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
                         isPomodoroStarted = false
                         isBreakPeriod = false
                         completedWorkSessions = 1
+                        currentSessionStartTime = nil
                         print("🎉 POMODORO: All sessions completed!")
                     } else {
                         // переходим в перерыв
@@ -300,6 +309,34 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
         isBreakPeriod = true
         remainingTime = breakDuration
         startTime = Date()
+    }
+    
+    private func savePomodoroSession(actualWorkTime: TimeInterval) {
+        guard let sessionStartTime = currentSessionStartTime else {
+                print("❌ POMODORO DEBUG: No currentSessionStartTime!")
+                return
+            }
+        
+        let pomodoroItem = PomodoroItem(
+            taskId: selectedTask?.id,
+            startTime: sessionStartTime,
+            endTime: Date(),
+            actualWorkTime: actualWorkTime,
+            targetWorkTime: workDuration,
+            completedIntervals: 1,
+            totalIntervals: 1
+        )
+        
+        modelContext.insert(pomodoroItem)
+        
+        do {
+            try modelContext.save()
+            print("POMODORO DEBUG: Saved pomodoro session - \(Int(actualWorkTime/60))min")
+            
+            NotificationCenter.default.post(name: .pomodoroSessionsDidChange, object: nil)
+        } catch {
+            print("❌ POMODORO DEBUG: Failed to save pomodoro session: \(error)")
+        }
     }
 
     private func enableSystemFocusIfPossible() {
@@ -365,3 +402,6 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
     }
 }
 
+extension Notification.Name {
+    static let pomodoroSessionsDidChange = Notification.Name("pomodoroSessionsDidChange")
+}
