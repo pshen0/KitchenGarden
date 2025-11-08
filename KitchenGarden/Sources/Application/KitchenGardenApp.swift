@@ -7,8 +7,8 @@ import AppKit
 struct KitchenGardenApp: App {
     @StateObject private var router: AppRouter
     private var diContainer: KitchenGardenDIContainer
-    private var clipboardHotkeyManager: ClipboardHotkeyManager!
-    private var hotkeyManager: LauncherHotkeyManager!
+    private var clipboardHotkeyManager: ClipboardHotkeyManager
+    private var hotkeyManager: LauncherHotkeyManager
     
     init() {
         let router = AppRouter()
