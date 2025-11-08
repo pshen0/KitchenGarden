@@ -20,7 +20,7 @@ struct HomeFactoryImpl: HomeFactory {
             appRouter: externalDeps.appRouter
         )
         let interactor = HomeInteractorImpl()
-        let viewModel = HomeViewModelImpl(interactor: interactor, router: router)
+        let viewModel = HomeViewModelImpl(interactor: interactor, router: router, modelContext: externalDeps.modelContext)
         let homeView = HomeView(viewModel: viewModel)
         return homeView
     }

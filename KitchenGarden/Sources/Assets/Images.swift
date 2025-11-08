@@ -13,6 +13,8 @@ enum Images {
         static let pause: Image = Image(systemName: "pause")
         static let forwardEnd: Image = Image(systemName: "forward.end")
         static let play: Image = Image(systemName: "play")
+        static let checkmark: Image = Image(systemName: "circle")
+        
     }
     
     enum LocalImages {

@@ -19,5 +19,7 @@ enum Colors {
     static let yellowTask2: Color = Color("yellowTask2")
     static let yellowTaskLight: Color = Color("yellowTaskLight")
     
+    static let systemSecondaryBackground: Color = Color("systemSecondaryBackground")
+    
     static let greenBackground: Color = Color("greenBackground")
 }

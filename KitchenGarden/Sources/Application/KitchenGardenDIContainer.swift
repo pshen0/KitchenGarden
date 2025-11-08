@@ -11,7 +11,7 @@ final class KitchenGardenDIContainer {
     }
     
     lazy var homeModuleFactory: HomeFactory = {
-        HomeFactoryImpl(externalDeps: HomeExternalDeps(appRouter: router))
+        HomeFactoryImpl(externalDeps: HomeExternalDeps(appRouter: router, modelContext: modelContext))
     }()
     
     lazy var clipboardModuleFactory: ClipboardFactory = {

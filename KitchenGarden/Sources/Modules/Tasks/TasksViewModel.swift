@@ -30,7 +30,7 @@ final class TasksViewModelImpl: TasksViewModel {
         case -1:
             return tasks.filter { $0.priority == nil }
         case let priority?:
-            return tasks.filter { $0.priority == priority } 
+            return tasks.filter { $0.priority == priority }
         }
     }
     
@@ -53,16 +53,16 @@ final class TasksViewModelImpl: TasksViewModel {
     // MARK: - Public Methods
     
     func fetchTasks() {
-            do {
-                let descriptor = FetchDescriptor<TaskItem>(sortBy: [SortDescriptor(\.createdAt)])
-                let taskItems = try modelContext.fetch(descriptor)
-                tasks = taskItems.compactMap { interactor.toBusinessModel($0) }
-            } catch {
-                print("Failed to fetch tasks: \(error)")
-                tasks = []
-            }
+        do {
+            let descriptor = FetchDescriptor<TaskItem>(sortBy: [SortDescriptor(\.createdAt)])
+            let taskItems = try modelContext.fetch(descriptor)
+            tasks = taskItems.compactMap { interactor.toBusinessModel($0) }
+        } catch {
+            print("Failed to fetch tasks: \(error)")
+            tasks = []
         }
-        
+    }
+    
     func addTask(_ task: TasksModel) {
         let taskItem = interactor.toDataModel(task)
         modelContext.insert(taskItem)
@@ -70,6 +70,7 @@ final class TasksViewModelImpl: TasksViewModel {
         do {
             try modelContext.save()
             tasks.append(task)
+            NotificationCenter.default.post(name: .tasksDidChange, object: nil)
         } catch {
             print("Failed to save task: \(error)")
         }
@@ -94,6 +95,7 @@ final class TasksViewModelImpl: TasksViewModel {
                 if let index = tasks.firstIndex(where: { $0.id == task.id }) {
                     tasks[index] = task
                 }
+                NotificationCenter.default.post(name: .tasksDidChange, object: nil)
             }
         } catch {
             print("Failed to update task: \(error)")
@@ -110,6 +112,7 @@ final class TasksViewModelImpl: TasksViewModel {
                 try modelContext.save()
                 
                 tasks.removeAll { $0.id == task.id }
+                NotificationCenter.default.post(name: .tasksDidChange, object: nil)
             }
         } catch {
             print("Failed to delete task: \(error)")
@@ -121,5 +124,9 @@ final class TasksViewModelImpl: TasksViewModel {
     private let interactor: TasksInteractor
     private let router: TasksRouter
     private let modelContext: ModelContext
+    
+}
 
+extension Notification.Name {
+    static let tasksDidChange = Notification.Name("tasksDidChange")
 }
