@@ -28,6 +28,9 @@ final class KitchenGardenDIContainer {
     }()
     
     lazy var pomodoroModuleFactory: PomodoroFactory = {
-        PomodoroFactoryImpl(externalDeps: PomodoroExternalDeps(appRouter: router))
+        PomodoroFactoryImpl(externalDeps: PomodoroExternalDeps(
+            appRouter: router,
+            modelContext: modelContext
+        ))
     }()
 }

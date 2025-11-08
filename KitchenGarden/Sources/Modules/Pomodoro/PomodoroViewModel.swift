@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import SwiftData
 #if os(macOS)
 import AppKit
 #endif
@@ -13,6 +14,9 @@ protocol PomodoroViewModel: ObservableObject {
     var breakDuration: TimeInterval { get set }
     var isFocusModeEnabled: Bool { get set }
     var isFallingTomatoesEnabled: Bool { get set }
+    
+    var selectedTask: TaskItem? { get set }
+    var availableTasks: [TaskItem] { get }
 
     var isRunning: Bool { get }
     var isPomodoroStarted: Bool { get }
@@ -22,6 +26,7 @@ protocol PomodoroViewModel: ObservableObject {
     func startTimer()
     func pauseTimer()
     func resetTimer()
+    func fetchAvailableTasks()
     func completeWorkSession()
     func toggleFocusMode()
 }
@@ -66,20 +71,25 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
     }
     @Published var isFocusModeEnabled: Bool = false
     @Published var isFallingTomatoesEnabled: Bool = true
+    
+    @Published var selectedTask: TaskItem?
+    @Published var availableTasks: [TaskItem] = []
 
     @Published private(set) var isRunning: Bool = false
     @Published private(set) var isPomodoroStarted: Bool = false
     @Published private(set) var isBreakPeriod: Bool = false
     @Published private(set) var remainingTime: TimeInterval = 25 * 60
     
-    
     // MARK: - Init
     
-    init(interactor: PomodoroInteractor, router: PomodoroRouter) {
+    init(interactor: PomodoroInteractor, router: PomodoroRouter, modelContext: ModelContext) {
         self.interactor = interactor
         self.router = router
-        remainingTime = workDuration
+        self.modelContext = modelContext
+        self.remainingTime = workDuration
+
         setupTimer()
+        fetchAvailableTasks()
     }
 
     // MARK: - Focus Mode
@@ -132,11 +142,47 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
         completedWorkSessions = 1
     }
     
+    func fetchAvailableTasks() {
+        do {
+            let descriptor = FetchDescriptor<TaskItem>()
+            let taskItems = try modelContext.fetch(descriptor)
+            availableTasks = taskItems.filter { $0.status != .completed }
+            print("✅ Loaded \(availableTasks.count) available tasks")
+        } catch {
+            print("Failed to fetch tasks: \(error)")
+            availableTasks = []
+        }
+    }
+    
     func completeWorkSession() {
         pausedTime = nil
         
+        if !isBreakPeriod {
+            // досрочное завершение рабочей сессии
+            let actualWorkTime: TimeInterval
+            if let startTime = startTime {
+                actualWorkTime = min(Date().timeIntervalSince(startTime), workDuration)
+            } else {
+                actualWorkTime = workDuration
+            }
+            
+            if let task = selectedTask {
+                task.timeSpent += actualWorkTime
+                task.updatedAt = Date()
+                
+                do {
+                    try modelContext.save()
+                    print("✅ POMODORO DEBUG: Saved \(Int(actualWorkTime/60))min to task '\(task.title)'")
+                    print("   Total time spent: \(Int(task.timeSpent/60))min")
+                } catch {
+                    print("❌ POMODORO DEBUG: Failed to save task time: \(error)")
+                }
+            }
+        }
+        
+        // Остальная логика без изменений
         if isBreakPeriod {
-            if completedWorkSessions >= totalWorkSessions {
+            if completedWorkSessions > totalWorkSessions {
                 isPomodoroStarted = false
                 isRunning = false
                 isBreakPeriod = false
@@ -180,6 +226,7 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
     private var startTime: Date?
     private var pausedTime: TimeInterval?
     private var cancellables = Set<AnyCancellable>()
+    private let modelContext: ModelContext
     
     // MARK: - Private Methods
     
@@ -204,20 +251,40 @@ final class PomodoroViewModelImpl: PomodoroViewModel {
                 remainingTime = 0
                 
                 if !isBreakPeriod {
-                    completedWorkSessions = min(completedWorkSessions + 1, totalWorkSessions)
-                    if completedWorkSessions >= totalWorkSessions {
+                    // авто завершение рабочей сессии
+                    let actualWorkTime = workDuration // полное время работы
+                    
+                    // сохраняем время в задачу
+                    if let task = selectedTask {
+                        task.timeSpent += actualWorkTime
+                        task.updatedAt = Date()
+                        
+                        do {
+                            try modelContext.save()
+                            print("✅ POMODORO DEBUG: Saved \(Int(actualWorkTime/60))min to task '\(task.title)'")
+                            print("   Total time spent: \(Int(task.timeSpent/60))min")
+                        } catch {
+                            print("❌ POMODORO DEBUG: Failed to save task time: \(error)")
+                        }
+                    }
+                    
+                    if completedWorkSessions + 1 > totalWorkSessions {
+                        // все сессии завершены
                         isRunning = false
                         isPomodoroStarted = false
                         isBreakPeriod = false
                         completedWorkSessions = 1
+                        print("🎉 POMODORO: All sessions completed!")
                     } else {
+                        // переходим в перерыв
                         startBreakPeriod()
                     }
                 } else {
-                    isRunning = false
-                    isPomodoroStarted = false
+                    // завершение перерыва
                     isBreakPeriod = false
-                    completedWorkSessions = 1
+                    completedWorkSessions += 1
+                    remainingTime = workDuration
+                    self.startTime = Date()
                 }
             } else {
                 remainingTime = newRemainingTime

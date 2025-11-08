@@ -42,16 +42,8 @@ struct PomodoroView<ViewModel: PomodoroViewModel>: View {
 
                     Spacer()
                     
-                    pomodoroTimer(
-                        progress: progressValue,
-                        timeText: formattedRemainingTime,
-                        completed: viewModel.completedWorkSessions,
-                        total: viewModel.totalWorkSessions,
-                        geometry: geometry,
-                        isPomodoroStarted: viewModel.isPomodoroStarted,
-                        isBreakPeriod: viewModel.isBreakPeriod
-                    )
-                    .padding(.bottom,  geometry.size.height * 0.1)
+                    pomodoroTimer(geometry: geometry)
+                        .padding(.bottom, geometry.size.height * 0.1)
                     
                     bottomButtons(geometry: geometry, isPomodoroStarted: viewModel.isPomodoroStarted)
                     Spacer(minLength: geometry.size.height * 0.02)
@@ -148,75 +140,6 @@ struct PomodoroView<ViewModel: PomodoroViewModel>: View {
             }
     }
     
-    struct pomodoroTimer: View {
-        var progress: Double
-        var timeText: String
-        var completed: Int
-        var total: Int
-        var geometry: GeometryProxy
-        let isPomodoroStarted: Bool
-        let isBreakPeriod: Bool
-        
-        var body: some View {
-            let timerSize = min(geometry.size.width * 0.45, geometry.size.height * 0.45)
-            let circleLineWidth = timerSize * 0.055
-            let tomatoImageSize = timerSize * 0.7
-            let timeFontSize = timerSize * 0.17
-            let sessionFontSize = timerSize * 0.055
-            let focusFontSize = timerSize * 0.05
-            let timeTopPadding = timerSize * 0.22
-            
-            Group {
-                if isPomodoroStarted {
-                    ZStack {
-                        Circle()
-                            .stroke(Colors.redSecondary, lineWidth: circleLineWidth)
-                        
-                        Circle()
-                            .trim(from: 0.0, to: progress)
-                            .stroke(
-                                Colors.redAccent,
-                                style: StrokeStyle(lineWidth: circleLineWidth)
-                            )
-                            .rotationEffect(.degrees(-90))
-                        VStack {
-                            ZStack {
-                                Images.LocalImages.tomatoTimer
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: tomatoImageSize)
-                                VStack {
-                                    Text(timeText)
-                                        .bold()
-                                        .font(.system(size: timeFontSize))
-                                        .foregroundColor(Colors.pinkAccent)
-                                        .padding(.top, timeTopPadding)
-                                    Text("\(completed)/\(total)")
-                                        .font(.system(size: sessionFontSize))
-                                        .foregroundColor(Colors.pinkAccent)
-                                }
-                            }
-                            Text(isBreakPeriod ? "Time to take a break" : "Stay focus!")
-                                .font(.system(size: focusFontSize))
-                                .foregroundColor(Colors.redText)
-                        }
-                    }
-                    .frame(width: timerSize, height: timerSize)
-                } else {
-                    ZStack {
-                        Circle()
-                            .stroke(Colors.redSecondary, lineWidth: circleLineWidth)
-                        Images.LocalImages.tomato
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: tomatoImageSize)
-                    }
-                    .frame(width: timerSize, height: timerSize)
-                }
-            }
-        }
-    }
-    
     func bottomButtons(geometry: GeometryProxy, isPomodoroStarted: Bool) -> some View {
         let buttonSize = min(geometry.size.width * 0.08, geometry.size.height * 0.1)
         let fontSize = min(geometry.size.width * 0.03, geometry.size.height * 0.03)
@@ -269,6 +192,65 @@ struct PomodoroView<ViewModel: PomodoroViewModel>: View {
         }
     }
     
+    private func pomodoroTimer(geometry: GeometryProxy) -> some View {
+        let timerSize = min(geometry.size.width * 0.45, geometry.size.height * 0.45)
+        let circleLineWidth = timerSize * 0.055
+        let tomatoImageSize = timerSize * 0.7
+        let timeFontSize = timerSize * 0.17
+        let sessionFontSize = timerSize * 0.055
+        let focusFontSize = timerSize * 0.05
+        let timeTopPadding = timerSize * 0.22
+        
+        return Group {
+            if viewModel.isPomodoroStarted {
+                ZStack {
+                    Circle()
+                        .stroke(Colors.redSecondary, lineWidth: circleLineWidth)
+                    
+                    Circle()
+                        .trim(from: 0.0, to: progressValue)
+                        .stroke(
+                            Colors.redAccent,
+                            style: StrokeStyle(lineWidth: circleLineWidth)
+                        )
+                        .rotationEffect(.degrees(-90))
+                    VStack {
+                        ZStack {
+                            Images.LocalImages.tomatoTimer
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: tomatoImageSize)
+                            VStack {
+                                Text(formattedRemainingTime)
+                                    .bold()
+                                    .font(.system(size: timeFontSize))
+                                    .foregroundColor(Colors.pinkAccent)
+                                    .padding(.top, timeTopPadding)
+                                Text("\(viewModel.completedWorkSessions)/\(viewModel.totalWorkSessions)")
+                                    .font(.system(size: sessionFontSize))
+                                    .foregroundColor(Colors.pinkAccent)
+                            }
+                        }
+                        Text(viewModel.isBreakPeriod ? "Time to take a break" : "Stay focus!")
+                            .font(.system(size: focusFontSize))
+                            .foregroundColor(Colors.redText)
+                    }
+                }
+                .frame(width: timerSize, height: timerSize)
+            } else {
+                ZStack {
+                    Circle()
+                        .stroke(Colors.redSecondary, lineWidth: circleLineWidth)
+                    Images.LocalImages.tomato
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: tomatoImageSize)
+                }
+                .frame(width: timerSize, height: timerSize)
+            }
+        }
+    }
+    
     private var progressValue: Double {
         let total = viewModel.isBreakPeriod ? max(viewModel.breakDuration, 1) : max(viewModel.workDuration, 1)
         let remaining = min(max(viewModel.remainingTime, 0), total)
@@ -291,6 +273,9 @@ struct PomodoroView<ViewModel: PomodoroViewModel>: View {
 
 
 #Preview {
-    PomodoroView(viewModel: PomodoroViewModelImpl(interactor: PomodoroInteractorImpl(), router: PomodoroRouterImpl(appRouter: AppRouter())))
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: TaskItem.self, PomodoroItem.self, configurations: config)
+    
+    PomodoroView(viewModel: PomodoroViewModelImpl(interactor: PomodoroInteractorImpl(), router: PomodoroRouterImpl(appRouter: AppRouter()), modelContext: container.mainContext))
 }
 

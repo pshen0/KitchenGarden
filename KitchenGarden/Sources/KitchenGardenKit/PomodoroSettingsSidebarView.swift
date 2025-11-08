@@ -8,25 +8,62 @@ struct PomodoroSettingsSidebarView<ViewModel: PomodoroViewModel>: View {
         if isVisible {
             List {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Task Name")
+                    Text("Select Task")
                         .font(.headline)
-                    TextField("Enter task name", text: Binding(
-                        get: { viewModel.taskTitle },
-                        set: { newValue in
-                            if newValue.count <= 20 {
-                                viewModel.taskTitle = newValue
-                            } else {
-                                viewModel.taskTitle = String(newValue.prefix(20))
+                    
+                    Menu {
+                        
+                        Button(action: {
+                            viewModel.selectedTask = nil
+                            viewModel.taskTitle = "Focus session"
+                        }) {
+                            HStack {
+                                Text("Focus session")
+                                Spacer()
+                                if viewModel.selectedTask == nil {
+                                    Image(systemName: "checkmark")
+                                }
                             }
                         }
-                    ))
-                    .textFieldStyle(.plain)
-                    .padding(8)
-                    .background(Color.secondary.opacity(0.2))
-                    .cornerRadius(8)
-                    Text("\(viewModel.taskTitle.count)/20")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        
+                        ForEach(viewModel.availableTasks) { task in
+                            Button(action: {
+                                viewModel.selectedTask = task
+                                viewModel.taskTitle = task.title
+                            }) {
+                                HStack {
+                                    Text(task.title)
+                                        .lineLimit(1)
+                                    Spacer()
+                                    if viewModel.selectedTask?.id == task.id {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.blue)
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            if let selectedTask = viewModel.selectedTask {
+                                Text(selectedTask.title)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                            } else {
+                                Text("Focus session")
+                                    .foregroundColor(.primary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(8)
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(8)
+                    }
+                    .onAppear {
+                        viewModel.fetchAvailableTasks()
+                    }
                 }
                 .padding(.top, 30)
                 .padding(.vertical, 8)
@@ -102,6 +139,7 @@ struct StepperView: View {
                     .foregroundColor(value > range.lowerBound ? .primary : .secondary)
                     .font(.body)
                     .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(value <= range.lowerBound)
@@ -119,6 +157,7 @@ struct StepperView: View {
                     .foregroundColor(value < range.upperBound ? .primary : .secondary)
                     .font(.body)
                     .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(value >= range.upperBound)
