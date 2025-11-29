@@ -2,9 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSAppleEventsUsageDescription</key>
-    <string>KitchenGarden needs to monitor keyboard events to respond to the launcher hotkey (Cmd+Shift+Space).</string>
-    <key>Privacy - Input Monitoring Usage Description</key>
-    <string>KitchenGarden needs access to keyboard events to detect the launcher hotkey (Cmd+Shift+Space).</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>KitchenGarden needs to monitor keyboard events to respond to the launcher hotkey (Cmd+Shift+Space).</string>
+	<key>Privacy - Input Monitoring Usage Description</key>
+	<string>KitchenGarden needs access to keyboard events to detect the launcher hotkey (Cmd+Shift+Space).</string>
 </dict>
 </plist>
